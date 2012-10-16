@@ -16,6 +16,9 @@ def warning(par,s):
 
 def popup(par,t,s):
     QtGui.QMessageBox.information(par,t,s)
+    
+def exitApp(status=0):
+    sys.exit(status)
 
 class NoteTaker(QtGui.QWidget):
 
@@ -50,6 +53,9 @@ class NoteTaker(QtGui.QWidget):
         self.notewin = nw
         
     def mousePressEvent(self,ev):
+        if ev.button() != Qt.LeftButton:
+            self.abort()
+            
         if self.state == 0:        
             self.state = 1                        
             self.origin = ev.globalPos()
@@ -69,9 +75,8 @@ class NoteTaker(QtGui.QWidget):
             self.doSnip()
    
     def keyPressEvent(self, ev):
-        if ev.key() == Qt.Key_Escape: #close both windows and exit program
-            self.notewin.close()                
-            self.close()
+        if ev.key() == Qt.Key_Escape: 
+            self.abort()
     
     def doSnip(self):     
 
@@ -89,6 +94,13 @@ class NoteTaker(QtGui.QWidget):
         self.close()
         #self.hide()
     
+    def abort(self):
+        """close both windows and exit program"""
+        print "Aborting"
+#        self.notewin.close()                
+#        self.close()
+        exitApp(-1)
+
 #    def changeWindow(self,x,y,w,h,pixmap):
         #self.state = 2
         #self.lbl.setPixmap(pixmap)
@@ -194,8 +206,6 @@ class NoteWindow(QtGui.QLabel):
 #            if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
 #                self.close()
 
-
-
     def wheelEvent(self,ev):
         if ev.orientation()==Qt.Vertical:
             #print float(ev.delta())*0.01/8
@@ -210,7 +220,10 @@ class NoteWindow(QtGui.QLabel):
         if action == self.quitAction:
             print "Exiting"
             #QtCore.QCoreApplication.instance().quit()
-            QtGui.QApplication.quit()       #use this instead of instance().quit, that wasn't working sometimes
+            #QtGui.QApplication.quit()       
+            #self.close() #qt quit() method doesn't seem to work all the time, just close
+            exitApp()
+            
         
         elif action == self.copyAction:
             self.copyImg()
@@ -228,6 +241,8 @@ if __name__ == '__main__':
     note = NoteWindow()
     win = NoteTaker(nw=note)
 #    app.quit()
-    sys.exit(app.exec_())
+    status = app.exec_()
+    print "Exit Status: ", status
+    sys.exit(status)
 
 
