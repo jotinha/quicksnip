@@ -14,8 +14,8 @@ import sys,os
 def warning(par,s):
     QtGui.QMessageBox.warning(par,"Warning",s)
 
-def popup(par,t,s):
-    QtGui.QMessageBox.information(par,t,s)
+def popup(par,t,s,*args,**kwargs):
+    return QtGui.QMessageBox.information(par,t,s,*args,**kwargs)
     
 def exitApp(status=0):
     sys.exit(status)
@@ -157,7 +157,9 @@ class NoteWindow(QtGui.QLabel):
             p = os.path.expanduser(os.path.join(self.basedir,'snip%05i' % i + '.' + ext))
             if not os.path.exists(p):
                 if self.basePixmap.save(p,ext):
-                    popup(self,"Saved","Saved image to " + p)
+                    print popup(self,"Saved","Saved image to " + p,'Open &Dir','&Ok')
+                          
+
                 else:
                     warning(self,"Problem saving "+ p)
                 return
