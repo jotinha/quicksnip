@@ -159,10 +159,9 @@ class NoteWindow(QtGui.QLabel):
             p = os.path.join(self.basedir,'snip%05i' % i + '.' + ext)
             if not os.path.exists(p):
                 if self.basePixmap.save(p,ext):
-                    ans = popup(self,"Saved","Saved image to " + p,'&Ok','Open &Dir',escapeButtonNumber=0)
-                    if ans==1:
+                    ans =  popup(self,"Saved","Saved image to " + p,'Open &Dir','&Ok',defaultButtonNumber = 1,escapeButtonNumber=1)
+                    if ans==0:
                         QtGui.QDesktopServices.openUrl( QtCore.QUrl.fromLocalFile(self.basedir))
-
                 else:
                     warning(self,"Problem saving "+ p)
                 return
