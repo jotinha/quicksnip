@@ -11,6 +11,8 @@ from PyQt4.QtCore import Qt
 
 import sys,os
 
+BASEDIR = '~/.quicksnip/'
+
 def warning(par,s):
     QtGui.QMessageBox.warning(par,"Warning",s)
 
@@ -123,7 +125,7 @@ class NoteWindow(QtGui.QLabel):
         self.copyAction = menu.addAction("Copy to Clipboard")
         self.quitAction = menu.addAction("Quit")
         
-        self.basedir = basedir = os.path.expanduser('~/.quicksnip') #don't put trailing slash here
+        self.basedir = basedir = os.path.expanduser(BASEDIR)
         if not os.path.exists(basedir):
             os.mkdir(basedir)
         elif os.path.isfile(basedir):
@@ -154,12 +156,12 @@ class NoteWindow(QtGui.QLabel):
         
         ext = 'png'
         for i in range(99999):       
-            p = os.path.expanduser(os.path.join(self.basedir,'snip%05i' % i + '.' + ext))
+            p = os.path.join(self.basedir,'snip%05i' % i + '.' + ext)
             if not os.path.exists(p):
                 if self.basePixmap.save(p,ext):
-                    print popup(self,"Saved","Saved image to " + p,'Open &Dir','&Ok')
-                          
-
+                    ans =  popup(self,"Saved","Saved image to " + p,'Open &Dir','&Ok')
+                    if ans==0:
+                        QtGui.QDesktopServices.openUrl( QtCore.QUrl.fromLocalFile(self.basedir))
                 else:
                     warning(self,"Problem saving "+ p)
                 return
